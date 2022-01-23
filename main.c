@@ -1,26 +1,62 @@
+/*
+===============================================Programa Portal SIGA IPLEIRIA===================================================
+Projeto Avaliação Fundamentos da Progrmação
+
+Escola | IPL-ESTG
+Curso  | Programação de Sistemas de Informação
+Ano    | 1º
+Data   | 04/01/2022
+
+Programado por | Rodrigo Luís         nº2211919
+               | Leonardo Oliveira    nº2211924
+===============================================================================================================================
+*/
+
+
+//-----------INCLUDES--------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
 
-//-----------INCLUDES--------------
 
 //--------- CONSTANTES -----------
 #define MAX_NOME_ESTUDANTE 50
 #define MAX_VETOR_ESTUDANTES 120
-
 #define MIN_NUMERO_ESTUDANTE 1000000
 #define MAX_NUMERO_ESTUDANTE 9999999
 
+#define MAX_NOME_ESCOLA 50
+#define MAX_VETOR_ESCOLA 5
+#define MIN_NOME_ABREVIATURA 1
+#define MAX_NOME_ABREVIATURA 4
+#define MIN_NOME_CAMPUS 5
+#define MAX_NOME_CAMPUS 9
+#define MIN_NOME_LOCALIDADE 2
+#define MAX_NOME_LOCALIDADE 9
+
 #define NOME_FICHEIRO "estudantes.bin"
+
 
 //--------- ESTRUTURAS -----------
 typedef struct
 {
-   int numero;
-   char nome[MAX_NOME_ESTUDANTE];
-   int nota_final;
-}t_estudante;
+    int numero;
+    char nome[MAX_NOME_ESTUDANTE];
+    int nota_final;
+
+} t_estudante;
+
+typedef struct
+{
+    int numero;
+    char nome;
+    char abreviatura;
+    char campus;
+    char localidade;
+
+} t_escolas;
+
 
 
 //--------- PROTOTIPOS -----------
@@ -35,8 +71,10 @@ void mostrar_dados_estudantes(t_estudante estudantes[]);
 void escreve_estudante(t_estudante estudante);
 void alterar_nota_estudante(t_estudante estudantes[]);
 void mostrar_estatisticas(t_estudante estudantes[]);
-void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, FILE *nome_ficheiro);
-void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, FILE *nome_ficheiro);
+void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[]);
+void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[]);
+void inserir_dados_escola(t_escolas escola[]);
+t_escolas ler_dados_escola();
 
 void main()
 {
@@ -47,7 +85,7 @@ void main()
 
     for(int i= 0 ; i < MAX_VETOR_ESTUDANTES ; i++)
     {
-        strcpy(estudantes[i].nome, "");
+        estudantes[i].nome[0] = '/0';
         estudantes[i].numero = 0;
         estudantes[i].nota_final = 0;
     }
@@ -99,13 +137,14 @@ int menu_opcoes()
 {
     int opcao;
     system("cls");
-    opcao = ler_numero_int("1 - Inserir dados dos estudantes  \n\n"
-                           "2 - Mostrar dados dos estudantes  \n\n"
-                           "3 - Alterar notas finais dos estudantes\n\n"
-                           "4 - Estatísticas das Avaliações  \n\n"
-                           "5 - Gravar dados em ficheiro  \n\n"
-                           "6 - Ler dados de ficheiro  \n\n"
-                           "0 - Sair \n --> ",
+    opcao = ler_numero_int(
+                            "1 - Escolas        Registar/Consultar\n"
+                            "2 - Estudantes     Registar/Consultar\n"
+                            "3 - Notas          Registar/Alterar/Consultar\n"
+                            "4 - Transações     Registar/Consultar\n\n"
+                            "5 - Estatisticas\n"
+                            "6 - Guardar/Importar dados\n"
+                            "0 - Sair\n -->",
                            0, 6);
 
     return opcao;
@@ -130,7 +169,7 @@ int ler_numero_int(char *msg, int min, int max)
 
         if (numero_inputs_sucesso <1 || valor<min || valor>max)
         {
-            printf("\nIntroduza um único valor entre %d e %d !\n", min, max);
+            printf("\nIntroduza um unico valor entre %d e %d !\n", min, max);
             stop();
         }
 
@@ -206,7 +245,7 @@ t_estudante ler_dados_estudante()
     ler_string("\nNome: ", estudante.nome, 2, MAX_NOME_ESTUDANTE);
 
     estudante.numero = ler_numero_int("\nNumero de Estudante: ",
-                                             MIN_NUMERO_ESTUDANTE, MAX_NUMERO_ESTUDANTE);
+                                      MIN_NUMERO_ESTUDANTE, MAX_NUMERO_ESTUDANTE);
 
     estudante.nota_final =  ler_numero_int("\nNotal Final (Arredondada): ",0, 20);
 
@@ -250,7 +289,7 @@ void alterar_nota_estudante(t_estudante estudantes[])
     system("cls");
     printf("\n ---- Alterar Nota Estudante ----\n");
 
-    numero_estudante = ler_numero_int("Qual é o numero do estudante em que a nota será alterada: ",
+    numero_estudante = ler_numero_int("Qual � o numero do estudante em que a nota ser� alterada: ",
                                       MIN_NUMERO_ESTUDANTE,MAX_NUMERO_ESTUDANTE);
 
     for(int i=0 ; i<MAX_VETOR_ESTUDANTES ; i++)
@@ -275,12 +314,43 @@ void alterar_nota_estudante(t_estudante estudantes[])
 //----------------------------------------------------------------------------
 void mostrar_estatisticas(t_estudante estudantes[])
 {
+    int maximo=0;
+    int positivas=0;
+    float media=0;
+    int minimo=20;
+    int contador=0;
+
+    for(int i= 0 ; i < MAX_VETOR_ESTUDANTES ; i++)
+    {
+        if (estudantes[i].numero >= MIN_NUMERO_ESTUDANTE && estudantes[i].numero <= MAX_NUMERO_ESTUDANTE)
+        {
+            if (estudantes[i].nota_final > maximo)
+                maximo = estudantes[i].nota_final;
+
+            if (estudantes[i].nota_final < minimo)
+                minimo = estudantes[i].nota_final;
+
+            if (estudantes[i].nota_final >= 9.5)
+                positivas++;
+
+            media = media + estudantes[i].nota_final;
+            contador++;
+        }
+    }
+
+    media = media / contador;
+
+    printf("\nNota maxima: %d\n",maximo);
+    printf("\nNota minima: %d\n",minimo);
+    printf("\nMedia das notas: %.2f\n",media);
+    printf("\nNotas positivas: %d\n",positivas);
+
 
 }
 //----------------------------------------------------------------------------
 // Funcao gravar_ficheiro
 //----------------------------------------------------------------------------
-void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, FILE *nome_ficheiro)
+void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[])
 {
     FILE *f = fopen(nome_ficheiro, "wb");
     int num_elementos_escritos_sucesso = 0;
@@ -308,7 +378,7 @@ void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_eleme
 //----------------------------------------------------------------------------
 // Funcao ler_ficheiro
 //----------------------------------------------------------------------------
-void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, FILE *nome_ficheiro)
+void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[])
 {
     FILE *f = fopen(nome_ficheiro, "rb");
     int num_elementos_lidos_sucesso = 0;
@@ -331,4 +401,39 @@ void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elemento
         }
     }
     fclose(f);
+}
+
+//----------------------------------------------------------------------------
+// Funcao inserir_dados_escola
+//----------------------------------------------------------------------------
+void inserir_dados_escola(t_escolas escola[])
+{
+
+    for(int i= 0 ; i <= 5  ; i++)
+    {
+        if(escola[i].numero == 0 && escola[i].nome ==0)
+        {
+            escola[i] = ler_dados_escola();
+            break;
+        }
+    }
+
+}
+
+//----------------------------------------------------------------------------
+// Funcao ler_dados_escola
+//----------------------------------------------------------------------------
+t_escolas ler_dados_escola()
+{
+    t_escolas escolas;
+
+    ler_string("\nNome: ", escolas.nome, 3, MAX_NOME_ESCOLA);
+
+    ler_string("\nAbreviatura: ", escolas.abreviatura, MIN_NOME_ABREVIATURA, MAX_NOME_ABREVIATURA);
+
+    ler_string("\nCampus: ", escolas.campus, MIN_NOME_CAMPUS, MAX_NOME_CAMPUS);
+
+    ler_string("\nLocalidade: ", escolas.localidade, MIN_NOME_LOCALIDADE, MAX_NOME_LOCALIDADE);
+
+    return escolas;
 }
