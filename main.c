@@ -21,10 +21,14 @@ Programado por | Rodrigo Luís         nº2211919
 
 
 //--------- CONSTANTES -----------
-#define MAX_NOME_ESTUDANTE 50
-#define MAX_VETOR_ESTUDANTES 120
-#define MIN_NUMERO_ESTUDANTE 1000000
-#define MAX_NUMERO_ESTUDANTE 9999999
+#define MAX_NOME_UTILIZADOR 50
+#define MAX_VETOR_UTILIZADOR 120
+#define MIN_NUMERO_UTILIZADOR 1000000
+#define MAX_NUMERO_UTILIZADOR 9999999
+#define MIN_NUMERO_NIF 100000000
+#define MAX_NUMERO_NIF 999999999
+#define MAX_TIPO_UTILIZADOR 30
+#define MAX_EMAIL_UTILIZADOR 50
 
 #define MAX_NOME_ESCOLA 50
 #define MAX_VETOR_ESCOLA 5
@@ -35,28 +39,47 @@ Programado por | Rodrigo Luís         nº2211919
 #define MIN_NOME_LOCALIDADE 2
 #define MAX_NOME_LOCALIDADE 9
 
-#define NOME_FICHEIRO "estudantes.bin"
+#define MAX_TIPO_TRANSACAO 10
+#define MAX_TRANSACAO_DATA 10
+#define MAX_TRANSACAO_HORA 8
+#define MAX_VETOR_TRANSACAO 5000
+
+#define NOME_FICHEIRO "utilizadores.bin"
 
 
 //--------- ESTRUTURAS -----------
 typedef struct
 {
+    int id;
+    int saldo;
+    int nif;
     int numero;
-    char nome[MAX_NOME_ESTUDANTE];
-    int nota_final;
+    char nome[MAX_NOME_UTILIZADOR];
+    char tipo[MAX_TIPO_UTILIZADOR];
+    char email[MAX_EMAIL_UTILIZADOR];
 
-} t_estudante;
+} t_utilizador;
 
 typedef struct
 {
-    int numero;
-    char nome;
-    char abreviatura;
-    char campus;
-    char localidade;
+    int id;
+    char nome[MAX_NOME_ESCOLA];
+    char abreviatura[MAX_NOME_ABREVIATURA];
+    char campus[MAX_NOME_CAMPUS];
+    char localidade[MAX_NOME_LOCALIDADE];
 
 } t_escolas;
 
+typedef struct
+{
+    int id;
+    int idUtilizador;
+    char tipo[MAX_TIPO_TRANSACAO];
+    float valor;
+    char data[MAX_TRANSACAO_DATA];
+    char hora[MAX_TRANSACAO_HORA];
+
+} t_transacao;
 
 
 //--------- PROTOTIPOS -----------
@@ -65,32 +88,48 @@ int ler_numero_int(char *msg, int min, int max);
 void ler_string(char *msg, char *str, int min, int max);
 void stop();
 
-void inserir_dados_estudante(t_estudante estudantes[]);
-t_estudante ler_dados_estudante();
-void mostrar_dados_estudantes(t_estudante estudantes[]);
-void escreve_estudante(t_estudante estudante);
-void alterar_nota_estudante(t_estudante estudantes[]);
-void mostrar_estatisticas(t_estudante estudantes[]);
+void inserir_dados_utilizador(t_utilizador utilizadores[]);
+t_utilizador ler_dados_utilizador();
+void mostrar_dados_utilizadores(t_utilizador utilizadores[]);
+void escreve_utilizador(t_utilizador utilizador);
+void mostrar_estatisticas(t_utilizador utilizadores[]);
 void gravar_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[]);
 void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elementos, char nome_ficheiro[]);
 void inserir_dados_escola(t_escolas escola[]);
 t_escolas ler_dados_escola();
+void registar_transacao(t_transacao transacao[]);
+t_escolas ler_dados_transacao();
 
 void main()
 {
     setlocale(LC_ALL, "Portuguese");
 
-    t_estudante estudantes[MAX_VETOR_ESTUDANTES];
+    t_utilizador utilizadores[MAX_VETOR_UTILIZADOR];
+    t_escolas escolas[MAX_VETOR_ESCOLA];
+    t_transacao transacao[MAX_VETOR_TRANSACAO];
     int opcao;
 
-    for(int i= 0 ; i < MAX_VETOR_ESTUDANTES ; i++)
+    for(int i= 0 ; i < MAX_VETOR_UTILIZADOR ; i++)
     {
-        estudantes[i].nome[0] = '/0';
-        estudantes[i].numero = 0;
-        estudantes[i].nota_final = 0;
+        utilizadores[i].nome[0] = '/0';
+        utilizadores[i].id = 0;
+        utilizadores[i].abreviatura[0] = '/0';
+        utilizadores[i].saldo = 0;
+    }
+    for(int i= 0 ; i < MAX_VETOR_ESCOLA; i++)
+    {
+        utilizadores[i].nome[0] = '/0';
+        utilizadores[i].id = 0;
+        utilizadores[i].saldo = 0;
+    }
+    for(int i= 0 ; i < MAX_VETOR_TRANSACAO ; i++)
+    {
+        utilizadores[i].nome[0] = '/0';
+        utilizadores[i].id = 0;
+        utilizadores[i].saldo = 0;
     }
 
-    ler_ficheiro(estudantes, sizeof(t_estudante), MAX_VETOR_ESTUDANTES, NOME_FICHEIRO);
+    ler_ficheiro(utilizadores, sizeof(t_utilizador), MAX_VETOR_UTILIZADOR, NOME_FICHEIRO);
 
 
     do
@@ -101,23 +140,36 @@ void main()
         switch(opcao)
         {
         case 1:
-            inserir_dados_estudante(estudantes);
+            registar_escola(escolas);
             break;
         case 2:
-            mostrar_dados_estudantes(estudantes);
+            mostrar_escola(escolas);
             break;
         case 3:
-            alterar_nota_estudante(estudantes);
+            registar_utilizador(utilizadores);
             break;
         case 4:
-            mostrar_estatisticas(estudantes);
+            mostrar_utilizador(utilizadores);
             break;
         case 5:
-            gravar_ficheiro(estudantes, sizeof(t_estudante), MAX_VETOR_ESTUDANTES, NOME_FICHEIRO);
+            registar_transacao(transacao);
             break;
         case 6:
-            ler_ficheiro(estudantes, sizeof(t_estudante), MAX_VETOR_ESTUDANTES, NOME_FICHEIRO);
+            consultar_transacao(transacao);
             break;
+        case 7:
+            inserir_utilizador(utilizadores);
+            break;
+        case 8:
+            mostrar_utilizadores(utilizadores);
+            break;
+        case 9:
+            gravar_ficheiro(utilizadores, sizeof(t_utilizador), MAX_VETOR_UTILIZADOR, NOME_FICHEIRO);
+            break;
+        case 10:
+            ler_ficheiro(utilizadores, sizeof(t_utilizador), MAX_VETOR_UTILIZADOR, NOME_FICHEIRO);
+            break;
+
 
         }
         stop();
@@ -125,7 +177,7 @@ void main()
     }
     while(opcao != 0 );
 
-    gravar_ficheiro(estudantes, sizeof(t_estudante), MAX_VETOR_ESTUDANTES, NOME_FICHEIRO);
+    gravar_ficheiro(utilizadores, sizeof(t_utilizador), MAX_VETOR_UTILIZADOR, NOME_FICHEIRO);
 
 }
 
@@ -138,14 +190,18 @@ int menu_opcoes()
     int opcao;
     system("cls");
     opcao = ler_numero_int(
-                            "1 - Escolas        Registar/Consultar\n"
-                            "2 - Estudantes     Registar/Consultar\n"
-                            "3 - Notas          Registar/Alterar/Consultar\n"
-                            "4 - Transações     Registar/Consultar\n\n"
-                            "5 - Estatisticas\n"
-                            "6 - Guardar/Importar dados\n"
+                            "1 - Escolas            Registar\n"
+                            "2 - Escolas            Consultar\n"
+                            "3 - Utilizadores       Registar"
+                            "4 - Utilizadores       Consultar\n"
+                            "5 - Transações         Registar\n"
+                            "6 - Transações         Consultar\n"
+                            "7 - Estatisticas       Pagamentos por escola\n"
+                            "8 - Estatisticas       Pagamentos por utilizador\n"
+                            "9 - Guardar/Importar dados\n"
+                            "10 - Importar dados\n"
                             "0 - Sair\n -->",
-                           0, 6);
+                           0, 10);
 
     return opcao;
 }
@@ -170,6 +226,34 @@ int ler_numero_int(char *msg, int min, int max)
         if (numero_inputs_sucesso <1 || valor<min || valor>max)
         {
             printf("\nIntroduza um unico valor entre %d e %d !\n", min, max);
+            stop();
+        }
+
+    }
+    while(numero_inputs_sucesso <1 || valor<min || valor> max);
+
+    return valor;
+}
+
+//----------------------------------------------------------------------------
+// Funcao ler_numero_float
+// Desc: Le um unumero interio num intervalo entre min e max e apresenta a
+// a menssagem passada em *msg
+//----------------------------------------------------------------------------
+int ler_numero_float(char *msg, float min, float max)
+{
+    float valor;
+    int numero_inputs_sucesso;
+
+    do
+    {
+        printf("%s", msg);
+        fflush(stdin);
+        numero_inputs_sucesso = scanf("%.2f", &valor);
+
+        if (numero_inputs_sucesso <1 || valor<min || valor>max)
+        {
+            printf("\nIntroduza um unico valor entre %.2f e %.2f !\n", min, max);
             stop();
         }
 
@@ -218,16 +302,16 @@ void stop()
 
 
 //----------------------------------------------------------------------------
-// Funcao inserir_dados_estudante
+// Funcao inserir_dados_utilizador
 //----------------------------------------------------------------------------
-void inserir_dados_estudante(t_estudante estudantes[])
+void inserir_dados_utilizador(t_utilizador utilizadores[])
 {
 
-    for(int i= 0 ; i < MAX_VETOR_ESTUDANTES ; i++)
+    for(int i= 0 ; i < MAX_VETOR_UTILIZADOR ; i++)
     {
-        if(estudantes[i].numero == 0 && estudantes[i].nota_final ==0)
+        if(utilizadores[i].numero == 0 && utilizadores[i].id==0)
         {
-            estudantes[i] = ler_dados_estudante();
+            utilizadores[i] = ler_dados_utilizador();
             break;
         }
     }
@@ -236,72 +320,73 @@ void inserir_dados_estudante(t_estudante estudantes[])
 
 
 //----------------------------------------------------------------------------
-// Funcao ler_dados_estudante
+// Funcao ler_dados_utilizador
 //----------------------------------------------------------------------------
-t_estudante ler_dados_estudante()
+t_utilizador ler_dados_utilizador()
 {
-    t_estudante estudante;
+    t_utilizador utilizador;
 
-    ler_string("\nNome: ", estudante.nome, 2, MAX_NOME_ESTUDANTE);
+    utilizador.numero = ler_numero_int("\nNumero de utilizador: ",MIN_NUMERO_UTILIZADOR, MAX_NUMERO_UTILIZADOR);
 
-    estudante.numero = ler_numero_int("\nNumero de Estudante: ",
-                                      MIN_NUMERO_ESTUDANTE, MAX_NUMERO_ESTUDANTE);
+    ler_string("\nNome: ", utilizador.nome, MIN_NUMERO_UTILIZADOR, MAX_NOME_UTILIZADOR);
 
-    estudante.nota_final =  ler_numero_int("\nNotal Final (Arredondada): ",0, 20);
+    utilizador.nif = ler_numero_int("\nNIF: ",MIN_NUMERO_NIF, MAX_NUMERO_NIF);
 
-    return estudante;
+    utilizador.id =  ler_numero_int("\nNotal Final (Arredondada): ",0, 20);
+
+    return utilizador;
 }
 
 
 //----------------------------------------------------------------------------
-// Funcao mostrar_dados_estudantes
+// Funcao mostrar_dados_utilizadores
 //----------------------------------------------------------------------------
-void mostrar_dados_estudantes(t_estudante estudantes[])
+void mostrar_dados_utilizadores(t_utilizador utilizadores[])
 {
     int i;
 
-    for(i = 0; i < MAX_VETOR_ESTUDANTES ; i++)
+    for(i = 0; i < MAX_VETOR_UTILIZADOR ; i++)
     {
-        if(estudantes[i].numero != 0 && estudantes[i].nota_final !=0)
+        if(utilizadores[i].numero != 0 && utilizadores[i].id !=0)
         {
-            escreve_estudante(estudantes[i]);
+            escreve_utilizador(utilizadores[i]);
         }
     }
 }
 
 
-void escreve_estudante(t_estudante estudante)
+void escreve_utilizador(t_utilizador utilizador)
 {
     printf("\n-----------------------------------");
-    printf("\nNome         : %s ", estudante.nome);
-    printf("\nNumero       : %d", estudante.numero);
-    printf("\nNotal Final  : %d \n", estudante.nota_final);
+    printf("\nNome         : %s ", utilizador.nome);
+    printf("\nNumero       : %d", utilizador.numero);
+    printf("\nNotal Final  : %d \n", utilizador.id);
 }
 
 
 //----------------------------------------------------------------------------
 // Funcao continuar
 //----------------------------------------------------------------------------
-void alterar_nota_estudante(t_estudante estudantes[])
+void alterar_nota_utilizador(t_utilizador utilizadores[])
 {
-    int numero_estudante = 0;
+    int numero_utilizador = 0;
 
     system("cls");
-    printf("\n ---- Alterar Nota Estudante ----\n");
+    printf("\n ---- Alterar Nota utilizador ----\n");
 
-    numero_estudante = ler_numero_int("Qual � o numero do estudante em que a nota ser� alterada: ",
-                                      MIN_NUMERO_ESTUDANTE,MAX_NUMERO_ESTUDANTE);
+    numero_utilizador = ler_numero_int("Qual é o numero do utilizador em que a nota será alterada: ",
+                                      MIN_NUMERO_UTILIZADOR,MAX_NUMERO_UTILIZADOR);
 
-    for(int i=0 ; i<MAX_VETOR_ESTUDANTES ; i++)
+    for(int i=0 ; i<MAX_VETOR_UTILIZADOR ; i++)
     {
-        if(estudantes[i].numero == numero_estudante)
+        if(utilizadores[i].numero == numero_utilizador)
         {
             printf("\nAluno encontrado: \n");
-            escreve_estudante(estudantes[i]);
-            estudantes[i].nota_final = ler_numero_int("Introduza o novo valor da nota: ", 0, 20);
+            escreve_utilizador(utilizadores[i]);
+            utilizadores[i].id = ler_numero_int("Introduza o novo valor da nota: ", 0, 20);
 
             printf("\nNota alterada: \n");
-            escreve_estudante(estudantes[i]);
+            escreve_utilizador(utilizadores[i]);
 
             break;
         }
@@ -312,7 +397,7 @@ void alterar_nota_estudante(t_estudante estudantes[])
 //----------------------------------------------------------------------------
 // Funcao mostrar_estatisticas
 //----------------------------------------------------------------------------
-void mostrar_estatisticas(t_estudante estudantes[])
+void mostrar_estatisticas(t_utilizador utilizadores[])
 {
     int maximo=0;
     int positivas=0;
@@ -320,20 +405,20 @@ void mostrar_estatisticas(t_estudante estudantes[])
     int minimo=20;
     int contador=0;
 
-    for(int i= 0 ; i < MAX_VETOR_ESTUDANTES ; i++)
+    for(int i= 0 ; i < MAX_VETOR_UTILIZADOR ; i++)
     {
-        if (estudantes[i].numero >= MIN_NUMERO_ESTUDANTE && estudantes[i].numero <= MAX_NUMERO_ESTUDANTE)
+        if (utilizadores[i].numero >= MIN_NUMERO_UTILIZADOR && utilizadores[i].numero <= MAX_NUMERO_UTILIZADOR)
         {
-            if (estudantes[i].nota_final > maximo)
-                maximo = estudantes[i].nota_final;
+            if (utilizadores[i].id > maximo)
+                maximo = utilizadores[i].id;
 
-            if (estudantes[i].nota_final < minimo)
-                minimo = estudantes[i].nota_final;
+            if (utilizadores[i].id < minimo)
+                minimo = utilizadores[i].id;
 
-            if (estudantes[i].nota_final >= 9.5)
+            if (utilizadores[i].id >= 9.5)
                 positivas++;
 
-            media = media + estudantes[i].nota_final;
+            media = media + utilizadores[i].id;
             contador++;
         }
     }
@@ -403,15 +488,12 @@ void ler_ficheiro(void *ponteiro_dados, int tamanho_tipo_dados, int num_elemento
     fclose(f);
 }
 
-//----------------------------------------------------------------------------
-// Funcao inserir_dados_escola
-//----------------------------------------------------------------------------
 void inserir_dados_escola(t_escolas escola[])
 {
 
-    for(int i= 0 ; i <= 5  ; i++)
+    for(int i= 0 ; i <= MAX_VETOR_ESCOLA  ; i++)
     {
-        if(escola[i].numero == 0 && escola[i].nome ==0)
+        if(escola[i].id == 0 && escola[i].nome ==0)
         {
             escola[i] = ler_dados_escola();
             break;
@@ -436,4 +518,36 @@ t_escolas ler_dados_escola()
     ler_string("\nLocalidade: ", escolas.localidade, MIN_NOME_LOCALIDADE, MAX_NOME_LOCALIDADE);
 
     return escolas;
+}
+
+void registar_transacao(t_transacao transacao[])
+{
+
+    for(int i= 0 ; i <= MAX_VETOR_TRANSACAO  ; i++)
+    {
+        if(transacao[i].id == 0)
+        {
+            transacao[i] = ler_dados_transacao();
+            break;
+        }
+
+    }
+
+}
+
+//----------------------------------------------------------------------------
+// Funcao ler_transacao
+//----------------------------------------------------------------------------
+t_escolas ler_dados_transacao()
+{
+    t_transacao transacao;
+
+    transacao.idUtilizador = ler_numero_int("Numero do utilizador: ",MIN_NUMERO_UTILIZADOR,MAX_NUMERO_UTILIZADOR);
+
+    ler_string("\nTipo de pagamento: ", transacao.tipo, 1, MAX_TIPO_TRANSACAO);
+
+    transacao.valor = ler_numero_float("Numero do utilizador: ",0.01,9999.99);
+    
+
+    return transacao;
 }
