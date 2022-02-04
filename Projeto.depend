@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1643993927 source:c:\users\black\onedrive - ipleiria\psi\fundamentos da programação\projeto\projeto-fp\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<string.h>
+
