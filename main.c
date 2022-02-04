@@ -50,7 +50,7 @@ Programado por | Rodrigo Luís         nº2211919
 
 
 //--------- ESTRUTURAS -----------
-typedef struct
+typedef struct Utilizador
 {
     int id;
     int saldo;
@@ -62,7 +62,7 @@ typedef struct
 
 } t_utilizador;
 
-typedef struct
+typedef struct Escolas
 {
     int id;
     char nome[MAX_NOME_ESCOLA];
@@ -72,7 +72,7 @@ typedef struct
 
 } t_escolas;
 
-typedef struct
+typedef struct Transação
 {
     int id;
     int idUtilizador;
