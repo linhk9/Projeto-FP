@@ -459,73 +459,11 @@ void alterar_nota_utilizador(t_utilizador utilizadores[])
 //----------------------------------------------------------------------------
 void mostrar_estatisticas_escola(t_escolas escola[])
 {
-    int maximo=0;
-    int positivas=0;
-    float media=0;
-    int minimo=20;
-    int contador=0;
-
-    for(int i= 0 ; i < MAX_VETOR_UTILIZADOR ; i++)
-    {
-        if (escola[i].id =!0)
-        {
-            if (escola[i].id > maximo)
-                maximo = escola[i].id;
-
-            if (escola[i].id < minimo)
-                minimo = escola[i].id;
-
-            if (escola[i].id >= 9.5)
-                positivas++;
-
-            media = media + escola[i].id;
-            contador++;
-        }
-    }
-
-    media = media / contador;
-
-    printf("\nNota maxima: %d\n",maximo);
-    printf("\nNota minima: %d\n",minimo);
-    printf("\nMedia das notas: %.2f\n",media);
-    printf("\nNotas positivas: %d\n",positivas);
-
 
 }
 
 void mostrar_estatisticas_utilizador(t_utilizador utilizadores[])
 {
-    int maximo=0;
-    int positivas=0;
-    float media=0;
-    int minimo=20;
-    int contador=0;
-
-    for(int i= 0 ; i < MAX_VETOR_UTILIZADOR ; i++)
-    {
-        if (utilizadores[i].nif =!0)
-        {
-            if (utilizadores[i].id > maximo)
-                maximo = utilizadores[i].id;
-
-            if (utilizadores[i].id < minimo)
-                minimo = utilizadores[i].id;
-
-            if (utilizadores[i].id >= 9.5)
-                positivas++;
-
-            media = media + utilizadores[i].id;
-            contador++;
-        }
-    }
-
-    media = media / contador;
-
-    printf("\nNota maxima: %d\n",maximo);
-    printf("\nNota minima: %d\n",minimo);
-    printf("\nMedia das notas: %.2f\n",media);
-    printf("\nNotas positivas: %d\n",positivas);
-
 
 }
 //----------------------------------------------------------------------------
