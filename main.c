@@ -50,7 +50,7 @@ Programado por | Rodrigo Luís         nº2211919
 
 
 //--------- ESTRUTURAS -----------
-typedef struct Utilizador
+typedef struct
 {
     int id;
     int saldo;
@@ -62,7 +62,7 @@ typedef struct Utilizador
 
 } t_utilizador;
 
-typedef struct Escolas
+typedef struct
 {
     int id;
     char nome[MAX_NOME_ESCOLA];
@@ -72,7 +72,7 @@ typedef struct Escolas
 
 } t_escolas;
 
-typedef struct Transação
+typedef struct
 {
     int id;
     int idUtilizador;
@@ -580,7 +580,7 @@ t_transacao ler_transacao()
     transacao.valor = ler_numero_int("Valor: ",0,999999);
     ler_string("\nData: ", transacao.data, 1, 10);
     ler_string("\nHora: ", transacao.hora, 1, 10);
-    
+
     return transacao;
 }
 
